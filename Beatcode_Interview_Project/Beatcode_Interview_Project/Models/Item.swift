@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct Item: Identifiable {
+struct Item: Identifiable, Equatable {
     let id = UUID()
     let title: String
     var isFavourite: Bool

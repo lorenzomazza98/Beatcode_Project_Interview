@@ -11,6 +11,9 @@ struct ListView: View {
     @StateObject private var dataService = DataService()
     @State private var showingFilters = false
     @State private var selectedFilter: FilterOption = .all
+    @State private var selectedItem: Item? = nil
+    @State private var showDetail = false
+
     
     enum FilterOption: String, CaseIterable {
         case all = "All Items"
@@ -65,30 +68,38 @@ struct ListView: View {
         }
         .tint(Palette.primary)
         .animation(.smooth(duration: 0.3), value: selectedFilter)
+        .sheet(item: $selectedItem) { item in
+            // Find the binding for the selected item
+            if let binding = binding(for: item) {
+                DetailView(item: binding, currentFilter: selectedFilter)
+            }
+        }
     }
+
     
     // MARK: - List Row Builder
     @ViewBuilder
     private func listRow(for item: Item, at index: Int) -> some View {
         if let binding = binding(for: item) {
-            // In listRow(for:at:) function:
-            NavigationLink(destination: DetailView(item: binding, currentFilter: selectedFilter)) {
-                ListCellView(item: binding, index: index)
-            }
-            .swipeActions(edge: .trailing) {
-                Button(role: .destructive, action: {
-                    withAnimation {
-                        dataService.removeItem(id: item.id)
-                    }
-                }) {
-                    Label("Delete", systemImage: "trash")
+            ListCellView(item: binding, index: index)
+                .onTapGesture {
+                    selectedItem = item
+                    showDetail = true
                 }
-            }
-            .accessibilityElement(children: .combine)
-            .accessibilityHint("Swipe left to delete")
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive, action: {
+                        withAnimation {
+                            dataService.removeItem(id: item.id)
+                        }
+                    }) {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityHint("Swipe left to delete")
         }
     }
-    
+
     // MARK: - Binding Helper
     private func binding(for item: Item) -> Binding<Item>? {
         guard let index = dataService.items.firstIndex(where: { $0.id == item.id }) else {
