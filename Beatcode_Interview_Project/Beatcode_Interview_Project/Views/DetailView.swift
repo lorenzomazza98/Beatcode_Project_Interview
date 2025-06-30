@@ -7,29 +7,20 @@
 
 import SwiftUI
 
+
 struct DetailView: View {
     @Binding var item: Item
-    @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         VStack(spacing: 24) {
+            // Remove custom close button and keep only the title and favorite button
             HStack {
-                Button(role: .cancel, action: { dismiss() }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(.secondary)
-                }
-                .accessibilityLabel("Close details")
-                
                 Spacer()
-                
                 Text(item.title)
                     .font(.title.bold())
                     .foregroundColor(Palette.primary)
-                
                 Spacer()
-                
-                // favourite button with prominence
+                // Favourite button with prominence
                 Button(action: {
                     withAnimation {
                         item.isFavourite.toggle()
@@ -43,16 +34,16 @@ struct DetailView: View {
                 .accessibilityLabel("Toggle favourite")
             }
             .padding(.horizontal, 24)
-            
+
             Divider()
                 .background(Palette.secondary)
-            
+
             // Content card with depth
             VStack {
                 Text("Item Details")
                     .font(.headline)
                     .padding(.bottom, 8)
-                
+
                 Text("This is a detailed description for \(item.title). The content would normally contain specific information about this item.")
                     .font(.body)
                     .foregroundStyle(.secondary)
@@ -65,7 +56,7 @@ struct DetailView: View {
                     .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 5)
             )
             .padding(.horizontal, 24)
-            
+
             Spacer()
         }
         .padding(.top, 24)
@@ -78,6 +69,8 @@ struct DetailView: View {
             )
             .ignoresSafeArea()
         )
+        .navigationBarBackButtonHidden(false) // Show default back button
+        .navigationBarTitleDisplayMode(.inline) // Compact title in detail
     }
 }
 
