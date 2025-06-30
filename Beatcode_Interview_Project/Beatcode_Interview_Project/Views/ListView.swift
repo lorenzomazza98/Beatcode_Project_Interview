@@ -34,6 +34,27 @@ struct ListView: View {
                         let item = filteredItems[index]
                         listRow(for: item, at: index)
                     }
+                    // Empty state for "Favorites Only" filter
+                    if filteredItems.isEmpty && selectedFilter == .favorites {
+                        HStack {
+                            Spacer()
+                            VStack(spacing: 8) {
+                                Image(systemName: "star")
+                                    .font(.largeTitle)
+                                    .foregroundColor(.yellow)
+                                Text("No favorites yet")
+                                    .font(.body)
+                                    .foregroundColor(.secondary)
+                                Text("Mark items as favorites to see them here.")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.vertical, 32)
+                            Spacer()
+                        }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("No favorites yet. Mark items as favorites to see them here.")
+                    }
                 }
             }
             .listStyle(.insetGrouped)
