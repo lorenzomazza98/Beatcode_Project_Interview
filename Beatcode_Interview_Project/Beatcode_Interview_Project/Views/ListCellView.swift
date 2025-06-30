@@ -48,14 +48,13 @@ struct ListCellView: View {
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color(uiColor: .secondarySystemBackground))
-                .shadow(color: Color.black.opacity(0.35), radius: 10, x: 0, y: 4)
+                .fill(item.color.opacity(0.3)) // Use item's color
+                .shadow(color: Color.black.opacity(0.22), radius: 8, x: 0, y: 4)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                .stroke(item.isFavourite ? Color.yellow : Color.clear, lineWidth: 2)
         )
         .padding(.vertical, 2)
     }
 }
-

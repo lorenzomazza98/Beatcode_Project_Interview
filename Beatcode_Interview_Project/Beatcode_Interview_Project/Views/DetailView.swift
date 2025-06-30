@@ -60,15 +60,15 @@ struct DetailView: View {
             Spacer()
         }
         .padding(.top, 24)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(
-            LinearGradient(
-                colors: [Palette.background, Color(UIColor.systemBackground)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-        )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(
+                    LinearGradient(
+                        colors: [item.color.opacity(0.2), Color.black],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .ignoresSafeArea()
+                )
         .navigationBarBackButtonHidden(false) // Show default back button
         .navigationBarTitleDisplayMode(.inline) // Compact title in detail
     }
