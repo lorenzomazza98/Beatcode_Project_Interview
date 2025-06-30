@@ -58,7 +58,7 @@ struct ListView: View {
         // Safely get binding to the original item
         if let binding = binding(for: item) {
             NavigationLink(destination: DetailView(item: binding)) {
-                ListCellView(item: binding)
+                ListCellView(item: binding, index: index)
                     .contentShape(Rectangle())
                     .modernGradient()
             }
