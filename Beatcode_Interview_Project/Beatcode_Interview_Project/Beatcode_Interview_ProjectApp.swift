@@ -12,6 +12,7 @@ struct Beatcode_Interview_ProjectApp: App {
     var body: some Scene {
         WindowGroup {
             ListView()
+                .preferredColorScheme(.dark) // 👈 Force dark mode for the entire app
         }
     }
 }

@@ -33,52 +33,36 @@ struct ListView: View {
                     ForEach(filteredItems.indices, id: \.self) { index in
                         let item = filteredItems[index]
                         listRow(for: item, at: index)
+                            .listRowBackground(Color.clear) // Clear default background
+                            .listRowSeparator(.hidden) // Hide default separator
+                            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)) // Add spacing
                     }
+                    
                     // Empty state for "Favorites Only" filter
                     if filteredItems.isEmpty && selectedFilter == .favorites {
-                        HStack {
-                            Spacer()
-                            VStack(spacing: 8) {
-                                Image(systemName: "star")
-                                    .font(.largeTitle)
-                                    .foregroundColor(.yellow)
-                                Text("No favorites yet")
-                                    .font(.body)
-                                    .foregroundColor(.secondary)
-                                Text("Mark items as favorites to see them here.")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                            .padding(.vertical, 32)
-                            Spacer()
-                        }
-                        .accessibilityElement(children: .combine)
-                        .accessibilityLabel("No favorites yet. Mark items as favorites to see them here.")
+                        emptyStateView
                     }
                 }
             }
-            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden) // Hide list background
+            .background(Color.black) // Set overall background to black
+            .listStyle(.plain) // Use plain list style
             .navigationTitle("Featured Items")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    addButton
+                }
                 ToolbarItem(placement: .primaryAction) {
                     filterButton
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        dataService.addItem()
-                    }) {
-                        Image(systemName: "plus")
-                            .accessibilityLabel("Add new block")
-                    }
                 }
             }
             .sheet(isPresented: $showingFilters) {
                 filterView
             }
-            .tint(Palette.primary)
-            .animation(.smooth(duration: 0.3), value: selectedFilter)
         }
+        .tint(Palette.primary)
+        .animation(.smooth(duration: 0.3), value: selectedFilter)
     }
     
     // MARK: - List Row Builder
@@ -87,23 +71,20 @@ struct ListView: View {
         if let binding = binding(for: item) {
             NavigationLink(destination: DetailView(item: binding)) {
                 ListCellView(item: binding, index: index)
-                    .contentShape(Rectangle())
-                    .modernGradient()
             }
             .swipeActions(edge: .trailing) {
                 Button(role: .destructive, action: {
-                    dataService.removeItem(id: item.id)
+                    withAnimation {
+                        dataService.removeItem(id: item.id)
+                    }
                 }) {
                     Label("Delete", systemImage: "trash")
                 }
             }
-            .listRowBackground(Palette.rowBackground(index: index))
-            .listRowSeparatorTint(Palette.primary.opacity(0.3))
             .accessibilityElement(children: .combine)
             .accessibilityHint("Swipe left to delete")
         }
     }
-
     
     // MARK: - Binding Helper
     private func binding(for item: Item) -> Binding<Item>? {
@@ -122,7 +103,17 @@ struct ListView: View {
                 .accessibilityLabel("Filter options")
         }
     }
-
+    
+    private var addButton: some View {
+        Button(action: {
+            withAnimation {
+                dataService.addItem()
+            }
+        }) {
+            Image(systemName: "plus")
+                .accessibilityLabel("Add new block")
+        }
+    }
     
     private var filterHeader: some View {
         HStack {
@@ -140,6 +131,27 @@ struct ListView: View {
         }
         .padding(.vertical, 8)
         .accessibilityElement(children: .combine)
+    }
+    
+    private var emptyStateView: some View {
+        HStack {
+            Spacer()
+            VStack(spacing: 8) {
+                Image(systemName: "star")
+                    .font(.largeTitle)
+                    .foregroundColor(.yellow)
+                Text("No favorites yet")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                Text("Mark items as favorites to see them here.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.vertical, 32)
+            Spacer()
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("No favorites yet. Mark items as favorites to see them here.")
     }
     
     private var filterView: some View {
@@ -177,4 +189,3 @@ struct ListView_Previews: PreviewProvider {
         ListView()
     }
 }
-

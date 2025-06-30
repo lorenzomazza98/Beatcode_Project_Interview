@@ -10,59 +10,67 @@ import SwiftUI
 struct ListCellView: View {
     @Binding var item: Item
     let index: Int
-    
-    private var badge: some View {
-        ZStack {
-            Circle()
-                .fill(Palette.primary)
-                .frame(width: 28, height: 28)
-            Text("\(index + 1)")
-                .foregroundColor(.white)
-                .font(.caption.bold())
-        }
-        .accessibilityHidden(true)
-    }
+    @Environment(\.colorScheme) var colorScheme
 
-    private var favoriteButton: some View {
-        Button(action: {
-            withAnimation(.spring(duration: 0.3)) {
-                item.isFavourite.toggle()
-            }
-        }) {
-            Image(systemName: item.isFavourite ? "star.fill" : "star")
-                .symbolEffect(.bounce, value: item.isFavourite)
-                .font(.title3)
-                .foregroundColor(item.isFavourite ? .yellow : .secondary)
-                .contentTransition(.symbolEffect(.replace))
-        }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(item.isFavourite ? "Favorited" : "Not favorited")
-        .accessibilityValue(item.title)
-        .accessibilityHint("Double tap to toggle favorite status")
-        .buttonStyle(.plain)
-    }
-    
     var body: some View {
         HStack(spacing: 16) {
-            badge
-            
+            ZStack {
+                Circle()
+                    .fill(Palette.primary)
+                    .frame(width: 28, height: 28)
+                Text("\(index + 1)")
+                    .foregroundColor(.white)
+                    .font(.caption.bold())
+            }
+            .accessibilityHidden(true)
+
             Text(item.title)
                 .font(.headline)
                 .foregroundColor(.primary)
-            
+
             Spacer()
-            
-            favoriteButton
+
+            Button(action: {
+                withAnimation(.spring(duration: 0.3)) {
+                    item.isFavourite.toggle()
+                }
+            }) {
+                Image(systemName: item.isFavourite ? "star.fill" : "star")
+                    .symbolEffect(.bounce, value: item.isFavourite)
+                    .font(.title3)
+                    .foregroundColor(item.isFavourite ? .yellow : .secondary)
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(item.isFavourite ? "Favorited" : "Not favorited")
+            .accessibilityValue(item.title)
+            .accessibilityHint("Double tap to toggle favorite status")
+            .buttonStyle(.plain)
         }
         .padding(16)
         .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(UIColor.tertiarySystemBackground))
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(
+                    colorScheme == .dark
+                        ? Color(uiColor: .secondarySystemBackground)
+                        : Color.white
+                )
+                .shadow(
+                    color: colorScheme == .dark
+                        ? Color.black.opacity(0.35)
+                        : Color.gray.opacity(0.18),
+                    radius: 10, x: 0, y: 4
+                )
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(item.isFavourite ? Color.yellow : Color.clear, lineWidth: 2)
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(
+                    colorScheme == .dark
+                        ? Color.white.opacity(0.08)
+                        : Color.black.opacity(0.08),
+                    lineWidth: 1
+                )
         )
+        .padding(.vertical, 2)
     }
 }
 
