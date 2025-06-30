@@ -87,10 +87,12 @@ struct ListView: View {
     private var filterButton: some View {
         Button(action: { showingFilters.toggle() }) {
             Image(systemName: "line.3.horizontal.decrease.circle")
-                .symbolVariant(selectedFilter == .all ? .none : .fill)
+                .symbolVariant(selectedFilter == .favorites ? .fill : .none)
+                .foregroundColor(selectedFilter == .favorites ? .yellow : Palette.primary)
                 .accessibilityLabel("Filter options")
         }
     }
+
     
     private var filterHeader: some View {
         HStack {
