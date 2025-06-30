@@ -1,5 +1,3 @@
-Here’s a professional and well-organized README for your app:
-
 # Beatcode Interview Project
 
 ## Overview
