@@ -1,5 +1,3 @@
-
-
 //
 //  Item.swift
 //  Beatcode_Interview_Project
@@ -9,7 +7,7 @@
 
 import Foundation
 
-struct Item {
+struct Item: Identifiable {
     let id = UUID()
     let title: String
     var isFavourite: Bool
