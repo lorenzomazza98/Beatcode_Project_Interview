@@ -113,8 +113,10 @@ struct ListView: View {
             Image(systemName: "plus")
                 .accessibilityLabel("Add new block")
         }
+        .disabled(selectedFilter == .favorites) // Disable when in Favorites Only filter
+        .opacity(selectedFilter == .favorites ? 0.4 : 1.0) // Dim the button when disabled for visual feedback
     }
-    
+
     private var filterHeader: some View {
         HStack {
             Text("ITEMS")
