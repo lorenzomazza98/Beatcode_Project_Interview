@@ -7,26 +7,55 @@
 
 import SwiftUI
 
-struct ListCellView:  View {
+struct ListCellView: View {
     @Binding var item: Item
+    let index: Int
+    
     var body: some View {
-        HStack{
+        HStack(spacing: 16) {
+            // Modern badge with index
+            ZStack {
+                Circle()
+                    .fill(Palette.primary)
+                    .frame(width: 28, height: 28)
+                Text("\(index + 1)")
+                    .foregroundColor(.white)
+                    .font(.caption.bold())
+            }
+            .accessibilityHidden(true)
+            
             Text(item.title)
+                .font(.headline)
+                .foregroundColor(.primary)
+            
             Spacer()
-            Button(action: { item.isFavourite.toggle() }) {
-                Image(systemName: item.isFavourite ? "star.fill" : "star")
-                    .foregroundColor(item.isFavourite ? .yellow : .gray)
+            
+            // Animated favorite button
+            Button(action: {
+                withAnimation(.spring(duration: 0.3)) {
+                    item.isFavorite.toggle()
+                }
+            }) {
+                Image(systemName: item.isFavorite ? "star.fill" : "star")
+                    .symbolEffect(.bounce, value: item.isFavorite)
+                    .font(.title3)
+                    .foregroundColor(item.isFavorite ? .yellow : .secondary)
+                    .contentTransition(.symbolEffect(.replace))
             }
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel("\(item.title), \(item.isFavourite ? "favorited" : "not favorited")")
-            .accessibilityAddTraits(.isButton)
-            .accessibilityAction(named: "Toggle favorite") {
-                item.isFavourite.toggle()
-            }
-            .buttonStyle(.borderless)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(item.isFavorite ? "Favorited" : "Not favorited")
+            .accessibilityValue(item.title)
+            .accessibilityHint("Double tap to toggle favorite status")
+            .buttonStyle(.plain)
         }
-        .padding(12)
-        .background(item.isFavourite ? Color.yellow.opacity(0.1) : Color.clear)
-        .cornerRadius(8)
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(UIColor.tertiarySystemBackground))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(item.isFavorite ? Color.yellow : Color.clear, lineWidth: 2)
+        )
     }
 }
