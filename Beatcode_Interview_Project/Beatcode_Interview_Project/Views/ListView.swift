@@ -12,16 +12,22 @@ struct ListView: View {
     @StateObject private var dataService = DataService()
     
     var body: some View {
-        List {
-            ForEach($dataService.items) { $item in
-                ListCellView(item: $item)
-                    .listRowBackground(
-                        dataService.items.firstIndex(where: { $0.id == item.id })! % 2 == 0
-                                                ? Color.blue.opacity(0.1)
-                                                : Color.clear
-                    )
+            NavigationStack {
+                List {
+                    ForEach($dataService.items) { $item in
+                        NavigationLink(destination: DetailView(item: $item)) {
+                            ListCellView(item: $item)
+                                .contentShape(Rectangle()) // Makes entire cell tappable
+                        }
+                        .swipeActions(edge: .trailing) {
+                            Button(action: { item.isFavourite.toggle() }) {
+                                Label("Favorite", systemImage: "star")
+                            }
+                            .tint(.yellow)
+                        }
+                    }
+                }
+                .navigationTitle("Items")
             }
         }
-        .navigationTitle("Items")
-    }
 }
