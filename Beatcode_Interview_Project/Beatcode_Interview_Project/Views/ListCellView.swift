@@ -20,5 +20,7 @@ struct ListCellView:  View {
             .buttonStyle(.borderless)
         }
         .padding(12)
+        .background(item.isFavourite ? Color.yellow.opacity(0.1) : Color.clear)
+        .cornerRadius(8)
     }
 }
