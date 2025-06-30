@@ -11,7 +11,7 @@ import SwiftUI
 struct Beatcode_Interview_ProjectApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ListView()
         }
     }
 }
