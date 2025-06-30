@@ -64,19 +64,26 @@ struct ListView: View {
                 ToolbarItem(placement: .primaryAction) {
                     filterButton
                 }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        dataService.addItem()
+                    }) {
+                        Image(systemName: "plus")
+                            .accessibilityLabel("Add new block")
+                    }
+                }
             }
             .sheet(isPresented: $showingFilters) {
                 filterView
             }
+            .tint(Palette.primary)
+            .animation(.smooth(duration: 0.3), value: selectedFilter)
         }
-        .tint(Palette.primary)
-        .animation(.smooth(duration: 0.3), value: selectedFilter)
     }
     
     // MARK: - List Row Builder
     @ViewBuilder
     private func listRow(for item: Item, at index: Int) -> some View {
-        // Safely get binding to the original item
         if let binding = binding(for: item) {
             NavigationLink(destination: DetailView(item: binding)) {
                 ListCellView(item: binding, index: index)
@@ -84,17 +91,19 @@ struct ListView: View {
                     .modernGradient()
             }
             .swipeActions(edge: .trailing) {
-                Button(action: { binding.wrappedValue.isFavourite.toggle() }) {
-                    Label("Favorite", systemImage: "star")
+                Button(role: .destructive, action: {
+                    dataService.removeItem(id: item.id)
+                }) {
+                    Label("Delete", systemImage: "trash")
                 }
-                .tint(.yellow)
             }
             .listRowBackground(Palette.rowBackground(index: index))
             .listRowSeparatorTint(Palette.primary.opacity(0.3))
             .accessibilityElement(children: .combine)
-            .accessibilityHint("Swipe right for actions")
+            .accessibilityHint("Swipe left to delete")
         }
     }
+
     
     // MARK: - Binding Helper
     private func binding(for item: Item) -> Binding<Item>? {

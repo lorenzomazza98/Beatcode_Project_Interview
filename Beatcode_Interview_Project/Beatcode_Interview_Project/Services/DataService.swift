@@ -20,5 +20,13 @@ class DataService: ObservableObject {
             items[index].isFavourite.toggle()
         }
     }
+    
+    func addItem() {
+        let newIndex = items.count + 1
+        items.append(Item(title: "Cell number \(newIndex)", isFavourite: false))
+    }
+    
+    func removeItem(id: UUID) {
+        items.removeAll { $0.id == id }
+    }
 }
-
