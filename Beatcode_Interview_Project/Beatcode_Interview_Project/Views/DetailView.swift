@@ -7,44 +7,35 @@
 
 import SwiftUI
 
-
 struct DetailView: View {
     @Binding var item: Item
-
+    @Environment(\.dismiss) private var dismiss
+    let currentFilter: ListView.FilterOption
+    
     var body: some View {
         VStack(spacing: 24) {
-            // Remove custom close button and keep only the title and favorite button
             HStack {
-                Spacer()
+                // Title
                 Text(item.title)
                     .font(.title.bold())
                     .foregroundColor(Palette.primary)
-                Spacer()
-                // Favourite button with prominence
-                Button(action: {
-                    withAnimation {
-                        item.isFavourite.toggle()
-                    }
-                }) {
-                    Image(systemName: item.isFavourite ? "star.fill" : "star")
-                        .font(.title)
-                        .symbolEffect(.bounce, value: item.isFavourite)
-                        .foregroundColor(item.isFavourite ? .yellow : .secondary)
-                }
-                .accessibilityLabel("Toggle favourite")
+                    .frame(maxWidth: .infinity)
+                
+                // Favorite button
+                favoriteButton
             }
             .padding(.horizontal, 24)
-
+            
             Divider()
                 .background(Palette.secondary)
-
-            // Content card with depth
+            
+            // Content card
             VStack {
                 Text("Item Details")
                     .font(.headline)
                     .padding(.bottom, 8)
-
-                Text("This is a detailed description for \(item.title). The content would normally contain specific information about this item.")
+                
+                Text("This is a detailed description for \(item.title).")
                     .font(.body)
                     .foregroundStyle(.secondary)
             }
@@ -56,21 +47,43 @@ struct DetailView: View {
                     .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 5)
             )
             .padding(.horizontal, 24)
-
+            
             Spacer()
         }
         .padding(.top, 24)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(
-                    LinearGradient(
-                        colors: [item.color.opacity(0.2), Color.black],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .ignoresSafeArea()
-                )
-        .navigationBarBackButtonHidden(false) // Show default back button
-        .navigationBarTitleDisplayMode(.inline) // Compact title in detail
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(
+            LinearGradient(
+                colors: [item.color.opacity(0.2), Color.black],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+        )
+        .navigationBarBackButtonHidden(false)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+    
+    private var favoriteButton: some View {
+        Button(action: {
+            withAnimation {
+                let wasFavorite = item.isFavourite
+                item.isFavourite.toggle()
+                
+                // Dismiss if unfavoriting in favorites filter
+                if wasFavorite && currentFilter == .favorites {
+                    dismiss()
+                }
+            }
+        }) {
+            Image(systemName: item.isFavourite ? "star.fill" : "star")
+                .font(.title)
+                .symbolEffect(.bounce, value: item.isFavourite)
+                .foregroundColor(item.isFavourite ? .yellow : .secondary)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .contentShape(Rectangle())
+        .accessibilityLabel("Toggle favourite")
     }
 }
 

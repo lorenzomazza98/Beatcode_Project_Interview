@@ -22,10 +22,12 @@ struct ListView: View {
         case .all:
             return dataService.items
         case .favorites:
+            // Force re-evaluation when favorites change
+            _ = dataService.items.filter(\.isFavourite)
             return dataService.items.filter { $0.isFavourite }
         }
     }
-    
+
     var body: some View {
         NavigationStack {
             List {
@@ -69,7 +71,8 @@ struct ListView: View {
     @ViewBuilder
     private func listRow(for item: Item, at index: Int) -> some View {
         if let binding = binding(for: item) {
-            NavigationLink(destination: DetailView(item: binding)) {
+            // In listRow(for:at:) function:
+            NavigationLink(destination: DetailView(item: binding, currentFilter: selectedFilter)) {
                 ListCellView(item: binding, index: index)
             }
             .swipeActions(edge: .trailing) {
